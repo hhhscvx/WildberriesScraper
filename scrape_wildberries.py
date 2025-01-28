@@ -1,7 +1,8 @@
+import asyncio
 import json
-import requests
 
 from fake_useragent import UserAgent
+from aiohttp import ClientSession
 
 from schemas import Item
 from utils import (
@@ -10,7 +11,7 @@ from utils import (
 )
 
 
-def scrape_wildberries(artikul: int) -> Item:
+async def scrape_wildberries(http_client: ClientSession, artikul: int) -> Item:
     """
         Парсит всю инфу по товару артикула.
     """
@@ -21,23 +22,20 @@ def scrape_wildberries(artikul: int) -> Item:
     url = f"https://basket-{basket_version}.wbbasket.ru/vol{short_id}/part{part_id}/{artikul}/info/ru/card.json"
     logger.info(url)
 
-    headers = {'User-Agent': UserAgent().random}
-    data = requests.get(url, headers=headers)
+    response = await http_client.get(url)
 
-    print(data.text)
+    resp_json = await response.json()
 
-    item = json.loads(data.text)
-
-    item = Item.model_validate(item)
+    item = Item.model_validate(resp_json)
 
     logger.success(item.name)
     logger.success(item.category)
 
     add_data_url = f'https://card.wb.ru/cards/v2/detail?appType=1&curr=rub&dest=-1257786&nm={artikul}'
     logger.info(add_data_url)
-    add_data = requests.get(add_data_url, headers=headers)
+    add_data_response = await http_client.get(add_data_url)
 
-    add_data = json.loads(add_data.text)
+    add_data = await add_data_response.json()
 
     item.photo_count = add_data['data']['products'][0]['pics']
     item.rating = add_data['data']['products'][0]['reviewRating']
@@ -54,6 +52,13 @@ def scrape_wildberries(artikul: int) -> Item:
         for i in range(1, item.photo_count + 1)]
 
 
-if __name__ == "__main__":
+
+async def main():
     artikul = 27605639
-    scrape_wildberries(artikul=artikul)
+    headers = {'User-Agent': UserAgent().random}
+    async with ClientSession(headers=headers) as http_client:
+        await scrape_wildberries(http_client=http_client, artikul=artikul)
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
