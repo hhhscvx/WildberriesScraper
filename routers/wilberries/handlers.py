@@ -29,6 +29,13 @@ async def item_artikul_handler(message: Message, state: FSMContext):
     artikul = int(message.text)
     headers = {'User-Agent': UserAgent().random}
     async with ClientSession(headers=headers) as http_client:
-        item = await scrape_wildberries(http_client=http_client, artikul=artikul)
+        item = await scrape_wildberries(message=message, http_client=http_client, artikul=artikul)
 
-    await asyncio.to_thread(partial(add_or_update_google_sheets, item))
+    if item is not None:
+        await add_or_update_google_sheets(message, item)
+
+        await state.clear()
+
+@router.message(WBItem.artikul)
+async def item_artikul_handler_invalid(message: Message, state: FSMContext):
+    await message.answer(f"Введите корректное число")

@@ -37,7 +37,9 @@ def get_basket_version_by_short_id(short_id: int) -> str | None:
         basket = '16'
     elif 2622 <= short_id <= 2837:
         basket = '17'
-    else:
+    elif 2838 <= short_id <= 3053:
         basket = '18'
+    else:
+        basket = '19'
     
     return basket
