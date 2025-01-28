@@ -49,6 +49,9 @@ def scrape_wildberries(artikul: int) -> Item:
     logger.success(f"Reviews count: {item.reviews_count}")
     logger.success(f"Price: {item.price} руб.")
 
+    item.images_links = [
+        f"https://basket-{basket_version}.wbbasket.ru/vol{short_id}/part{part_id}/{artikul}/images/big/{i}.webp;"
+        for i in range(1, item.photo_count + 1)]
 
 
 if __name__ == "__main__":
