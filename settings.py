@@ -7,6 +7,8 @@ class Settings(BaseSettings):
                                       extra="ignore")
     
     BOT_TOKEN: str
+    CREDENTIALS_FILE: str = "creds.json"
+    SPREADSHEET_ID: str
 
 
 settings = Settings()

@@ -1,5 +1,4 @@
 import asyncio
-import json
 
 from fake_useragent import UserAgent
 from aiohttp import ClientSession
@@ -51,9 +50,12 @@ async def scrape_wildberries(http_client: ClientSession, artikul: int) -> Item:
         f"https://basket-{basket_version}.wbbasket.ru/vol{short_id}/part{part_id}/{artikul}/images/big/{i}.webp;"
         for i in range(1, item.photo_count + 1)]
 
+    return item
+
 
 
 async def main():
+    """Для тестов"""
     artikul = 27605639
     headers = {'User-Agent': UserAgent().random}
     async with ClientSession(headers=headers) as http_client:
