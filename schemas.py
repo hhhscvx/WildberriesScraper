@@ -12,8 +12,8 @@ class Item(BaseModel):
     images_links: list[str] | None = None # Берется из другой апишки.
     photo_count: int | None = None
     
-    specifications: list[dict] = Field(alias="options")
-    description: str
+    options: list[dict] | None = None
+    description: str | None = None
     rating: float | None = None
     reviews_count: int | None = None
     

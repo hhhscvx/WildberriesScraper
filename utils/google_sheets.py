@@ -24,7 +24,7 @@ async def add_or_update_google_sheets(
             item.artikul, item.name, item.category,
             item.price, item.description, item.rating,
             item.reviews_count, json.dumps(item.images_links),
-            json.dumps(item.specifications, ensure_ascii=False),
+            json.dumps(item.options, ensure_ascii=False),
         ]
         for idx, row in enumerate(all_rows, start=2):
             if row.get("Артикул") == item.artikul:
